@@ -90,7 +90,7 @@ def admin_panel():
     
     # Fetch ALL history from ALL users (limit to last 50)
     try:
-        history_ref = db.collection('history').order_by('timestamp', direction=firestore.Query.DESCENDING).limit(50)
+        history_ref = db.collection('history').order_by('timestamp', direction=firestore.Query.DESCENDING).limit(1000)
         history_docs = history_ref.stream()
         
         all_transactions = []
