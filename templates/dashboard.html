@@ -22,7 +22,7 @@
                         <i class="fas fa-gift fa-2x text-warning mb-2"></i>
                         <h5>Redeem</h5>
                         <p class="small text-muted">Get coupons</p>
-                        <button class="btn btn-outline-primary btn-sm">View Shop</button>
+                        <a href="#rewards-section" class="btn btn-outline-primary btn-sm">View Shop</a>
                     </div>
                 </div>
                 <div class="col-6">
@@ -39,7 +39,49 @@
                 <strong>User ID:</strong> {{ user_id }} <br>
                 <small>Use this ID or QR code at the ReVend Machine.</small>
             </div>
-        </div>
-    </div>
-</div>
-{% endblock %}
+
+            <hr class="my-5">
+            
+            <div id="rewards-section">
+                <h3 class="mb-4"><i class="fas fa-store"></i> Rewards Catalog</h3>
+                
+                <div class="row g-3">
+                    <div class="col-6 col-md-4">
+                        <div class="card h-100 shadow-sm">
+                            <div class="bg-light text-center py-4 text-secondary">
+                                <i class="fab fa-amazon fa-3x"></i>
+                            </div>
+                            <div class="card-body">
+                                <h6 class="card-title">Amazon ₹50</h6>
+                                <p class="card-text text-success fw-bold">500 Points</p>
+                                <button class="btn btn-primary btn-sm w-100" onclick="alert('Redemption feature coming soon!')">Claim</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-6 col-md-4">
+                        <div class="card h-100 shadow-sm">
+                            <div class="bg-light text-center py-4 text-danger">
+                                <i class="fas fa-ticket-alt fa-3x"></i>
+                            </div>
+                            <div class="card-body">
+                                <h6 class="card-title">Movie Ticket 10% Off</h6>
+                                <p class="card-text text-success fw-bold">200 Points</p>
+                                <button class="btn btn-primary btn-sm w-100" onclick="alert('Redemption feature coming soon!')">Claim</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-6 col-md-4">
+                        <div class="card h-100 shadow-sm">
+                            <div class="bg-light text-center py-4 text-warning">
+                                <i class="fas fa-coffee fa-3x"></i>
+                            </div>
+                            <div class="card-body">
+                                <h6 class="card-title">Free Coffee</h6>
+                                <p class="card-text text-success fw-bold">300 Points</p>
+                                <button class="btn btn-primary btn-sm w-100" onclick="alert('Redemption feature coming soon!')">Claim</button>
+                            </div>
+                        </div>
+                    </div>
+                </div> </div> </div> </div> </div> {% endblock %}
