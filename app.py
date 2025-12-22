@@ -111,6 +111,43 @@ def deposit():
 
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
+# --- REDEMPTION ROUTE ---
+@app.route('/api/redeem', methods=['POST'])
+def redeem():
+    try:
+        data = request.json
+        user_id = data.get('user_id')
+        cost = int(data.get('cost'))
+        reward_name = data.get('reward_name')
+        
+        user_ref = db.collection('users').document(user_id)
+        doc = user_ref.get()
+        
+        if not doc.exists:
+            return jsonify({"status": "error", "message": "User not found"}), 404
+            
+        current_points = doc.to_dict().get('points', 0)
+        
+        if current_points < cost:
+            return jsonify({"status": "error", "message": "Insufficient points"}), 400
+            
+        # Deduct points
+        user_ref.update({
+            "points": firestore.Increment(-cost)
+        })
+        
+        # (Optional) Log this transaction in a separate collection so you can track it
+        db.collection('redemptions').add({
+            "user_id": user_id,
+            "reward": reward_name,
+            "cost": cost,
+            "timestamp": datetime.datetime.now(),
+            "status": "pending_approval" # You can check this later to give them the physical item
+        })
+        
+        return jsonify({"status": "success", "new_balance": current_points - cost})
 
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
 if __name__ == '__main__':
     app.run(debug=True)

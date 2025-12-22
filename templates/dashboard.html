@@ -84,4 +84,43 @@
                             </div>
                         </div>
                     </div>
-                </div> </div> </div> </div> </div> {% endblock %}
+                </div> </div> </div> </div> </div> 
+<script>
+async function redeemReward(rewardName, cost) {
+    if (!confirm(`Are you sure you want to redeem ${rewardName} for ${cost} points?`)) {
+        return;
+    }
+
+    const userId = "{{ user_id }}"; // Gets the ID from the HTML
+
+    try {
+        const response = await fetch('/api/redeem', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                user_id: userId,
+                cost: cost,
+                reward_name: rewardName
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.status === 'success') {
+            alert(`Success! You redeemed ${rewardName}. New Balance: ${data.new_balance}`);
+            location.reload(); // Refresh page to show new points
+        } else {
+            alert("Error: " + data.message);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert("Something went wrong!");
+    }
+}
+</script>                
+                
+                
+                
+                {% endblock %}
