@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+<nav class="navbar navbar-dark bg-dark mb-4">
+    <div class="container">
+        <span class="navbar-brand mb-0 h1"><i class="fas fa-recycle"></i> ReVend</span>
+        <a href="/logout" class="btn btn-outline-light btn-sm">Logout</a>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card card-custom bg-gradient-primary text-white mb-4 p-4 text-center">
+                <h3>Current Balance</h3>
+                <h1 class="display-1 fw-bold">{{ points }}</h1>
+                <p class="lead">Green Points</p>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-6">
+                    <div class="card card-custom p-3 text-center h-100">
+                        <i class="fas fa-gift fa-2x text-warning mb-2"></i>
+                        <h5>Redeem</h5>
+                        <p class="small text-muted">Get coupons</p>
+                        <button class="btn btn-outline-primary btn-sm">View Shop</button>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="card card-custom p-3 text-center h-100">
+                        <i class="fas fa-history fa-2x text-info mb-2"></i>
+                        <h5>History</h5>
+                        <p class="small text-muted">Past deposits</p>
+                        <button class="btn btn-outline-secondary btn-sm">View Log</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="alert alert-info mt-4">
+                <strong>User ID:</strong> {{ user_id }} <br>
+                <small>Use this ID or QR code at the ReVend Machine.</small>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
