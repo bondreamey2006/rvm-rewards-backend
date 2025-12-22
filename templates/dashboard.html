@@ -30,7 +30,7 @@
                         <i class="fas fa-history fa-2x text-info mb-2"></i>
                         <h5>History</h5>
                         <p class="small text-muted">Past deposits</p>
-                        <button class="btn btn-outline-secondary btn-sm">View Log</button>
+                        <a href="#history-section" class="btn btn-outline-secondary btn-sm">View Log</a>
                     </div>
                 </div>
             </div>
@@ -84,14 +84,48 @@
                             </div>
                         </div>
                     </div>
-                </div> </div> </div> </div> </div> 
-<script>
+                </div> 
+            </div>
+
+            <div id="history-section">
+                <h4 class="mt-5 mb-3"><i class="fas fa-list"></i> Recent Activity</h4>
+                <div class="card card-custom p-3 shadow-sm">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Activity</th>
+                                    <th>Points</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for t in transactions %}
+                                <tr>
+                                    <td>{{ t.timestamp.strftime('%Y-%m-%d %H:%M') }}</td>
+                                    <td>{{ t.description }}</td>
+                                    <td class="{{ 'text-success' if t.points > 0 else 'text-danger' }} fw-bold">
+                                        {{ '+' if t.points > 0 else '' }}{{ t.points }}
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="3" class="text-center text-muted py-3">No recent activity found.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mb-5"></div> </div> </div> </div> <script>
 async function redeemReward(rewardName, cost) {
     if (!confirm(`Are you sure you want to redeem ${rewardName} for ${cost} points?`)) {
         return;
     }
 
-    const userId = "{{ user_id }}"; // Gets the ID from the HTML
+    const userId = "{{ user_id }}"; 
 
     try {
         const response = await fetch('/api/redeem', {
@@ -110,7 +144,7 @@ async function redeemReward(rewardName, cost) {
 
         if (data.status === 'success') {
             alert(`Success! You redeemed ${rewardName}. New Balance: ${data.new_balance}`);
-            location.reload(); // Refresh page to show new points
+            location.reload(); 
         } else {
             alert("Error: " + data.message);
         }
@@ -119,8 +153,6 @@ async function redeemReward(rewardName, cost) {
         alert("Something went wrong!");
     }
 }
-</script>                
-                
-                
-                
-                {% endblock %}
+</script>
+
+{% endblock %}

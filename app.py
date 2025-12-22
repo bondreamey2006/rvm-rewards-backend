@@ -62,14 +62,45 @@ def dashboard():
     user_ref = db.collection('users').document(user_id)
     doc = user_ref.get()
     
-    user_data = doc.to_dict() if doc.exists else {}
-    points = user_data.get('points', 0)
+    points = 0
+    if doc.exists:
+        points = doc.to_dict().get('points', 0)
     
-    # Fetch Recent Transactions (Optional: Create a subcollection for history)
-    # This is just a placeholder for now
-    history = [] 
+    # --- NEW CODE: Fetch History ---
+    # Get last 10 transactions for THIS user
+    try:
+        history_ref = db.collection('history').where('user_id', '==', user_id).order_by('timestamp', direction=firestore.Query.DESCENDING).limit(10)
+        history_docs = history_ref.stream()
+        
+        transactions = []
+        for h in history_docs:
+            data = h.to_dict()
+            transactions.append(data)
+    except Exception as e:
+        print(f"Error fetching history: {e}")
+        transactions = []
+    # -------------------------------
     
-    return render_template('dashboard.html', user_id=user_id, points=points)
+    return render_template('dashboard.html', user_id=user_id, points=points, transactions=transactions)
+
+# --- ADMIN ROUTE (New) ---
+@app.route('/admin')
+def admin_panel():
+    # In a real app, add a password check here!
+    
+    # Fetch ALL history from ALL users (limit to last 50)
+    try:
+        history_ref = db.collection('history').order_by('timestamp', direction=firestore.Query.DESCENDING).limit(50)
+        history_docs = history_ref.stream()
+        
+        all_transactions = []
+        for h in history_docs:
+            all_transactions.append(h.to_dict())
+    except Exception as e:
+        print(f"Error fetching admin history: {e}")
+        all_transactions = []
+        
+    return render_template('admin.html', transactions=all_transactions)
 
 # --- MACHINE API ROUTES ---
 # Your RVM machine sends data here
@@ -106,11 +137,22 @@ def deposit():
                 "points": total_points,
                 "created_at": datetime.datetime.now()
             })
+        
+        # --- NEW CODE: Log the Deposit ---
+        db.collection('history').add({
+            "user_id": user_id,
+            "type": "deposit",
+            "description": f"Deposited {count} {item_type}(s)",
+            "points": total_points,
+            "timestamp": datetime.datetime.now()
+        })
+        # -------------------------------
             
         return jsonify({"status": "success", "added_points": total_points, "user": user_id})
 
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
+
 # --- REDEMPTION ROUTE ---
 @app.route('/api/redeem', methods=['POST'])
 def redeem():
@@ -136,18 +178,20 @@ def redeem():
             "points": firestore.Increment(-cost)
         })
         
-        # (Optional) Log this transaction in a separate collection so you can track it
-        db.collection('redemptions').add({
+        # --- NEW CODE: Log the Redemption ---
+        db.collection('history').add({
             "user_id": user_id,
-            "reward": reward_name,
-            "cost": cost,
-            "timestamp": datetime.datetime.now(),
-            "status": "pending_approval" # You can check this later to give them the physical item
+            "type": "redemption",
+            "description": f"Redeemed: {reward_name}",
+            "points": -cost,  # Negative number for spending
+            "timestamp": datetime.datetime.now()
         })
+        # -------------------------------
         
         return jsonify({"status": "success", "new_balance": current_points - cost})
 
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
+
 if __name__ == '__main__':
     app.run(debug=True)
