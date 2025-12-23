@@ -1,66 +1,98 @@
 {% extends "base.html" %}
 {% block content %}
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-5">
-    <div class="container">
-        <a class="navbar-brand fw-bold" href="/"><i class="fas fa-recycle"></i> ReVend</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#publicNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="publicNav">
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item"><a class="nav-link" href="/why">Why ReVend?</a></li>
-                <li class="nav-item"><a class="nav-link" href="/map">Find Machine</a></li>
-                <li class="nav-item"><a class="nav-link" href="/contact">Contact</a></li>
-            </ul>
-        </div>
-    </div>
-</nav>
-
-<div class="container">
-    <div class="row align-items-center justify-content-center">
-        <div class="col-md-6 mb-5 d-none d-md-block">
-            <h1 class="display-4 fw-bold text-success">Recycle Smart. <br>Earn Instantly.</h1>
-            <p class="lead text-muted mb-4">Join the future of waste management. Deposit your plastic bottles and cans to earn rewards.</p>
-            <div class="d-flex gap-3">
-                <a href="/why" class="btn btn-outline-success btn-lg">Learn More</a>
-                <a href="/map" class="btn btn-outline-dark btn-lg">Find a Machine</a>
-            </div>
-        </div>
-
+<div class="container mt-5">
+    <div class="row justify-content-center">
         <div class="col-md-5">
-            <div class="card shadow-lg border-0 rounded-3">
-                <div class="card-header bg-success text-white text-center py-3">
-                    <h4 class="my-1"><i class="fas fa-user-circle"></i> Member Login</h4>
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-success text-white text-center">
+                    <h4>Login</h4>
                 </div>
                 <div class="card-body p-4">
-                    
-                    {% with messages = get_flashed_messages(with_categories=true) %}
-                      {% if messages %}
-                        {% for category, message in messages %}
-                          <div class="alert alert-{{ category }}">{{ message }}</div>
-                        {% endfor %}
-                      {% endif %}
-                    {% endwith %}
+                    <div id="alertBox" class="alert d-none"></div>
 
-                    <form method="POST" action="/login">
+                    <form id="loginForm">
                         <div class="mb-3">
-                            <label class="form-label text-muted">User ID</label>
-                            <input class="form-control form-control-lg" type="text" name="phone_number" placeholder="e.g. 8888" required />
+                            <label class="form-label">Email</label>
+                            <input type="email" id="email" class="form-control" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label text-muted">Password</label>
-                            <input class="form-control form-control-lg" type="password" name="password" placeholder="******" required />
+                            <label class="form-label">Password</label>
+                            <input type="password" id="password" class="form-control" required>
                         </div>
                         <div class="d-grid">
-                            <button class="btn btn-success btn-lg" type="submit">Login</button>
+                            <button type="submit" class="btn btn-success" id="loginBtn">Login</button>
                         </div>
                     </form>
-                </div>
-                <div class="card-footer text-center py-3 bg-light">
-                    <div class="small text-muted">New user? <a href="/register" class="fw-bold text-success">Create an Account</a></div>
+                    
+                    <form id="flaskAuthForm" action="/login" method="POST" style="display:none;">
+                        <input type="hidden" name="email" id="flaskEmail">
+                    </form>
+
+                    <div class="text-center mt-3">
+                        <small>Need an account? <a href="/register">Register here</a></small>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script>
+    // --- I HAVE FILLED IN YOUR REAL KEYS HERE ---
+    const firebaseConfig = {
+        apiKey: "AIzaSyChYVXkvYgTchL1JK3Z_ESo1ucsbojGOVI",
+        authDomain: "rvm-rewards.firebaseapp.com",
+        projectId: "rvm-rewards",
+        storageBucket: "rvm-rewards.firebasestorage.app",
+        messagingSenderId: "586613270766",
+        appId: "1:586613270766:web:241393dd194c33dd02ebff",
+        measurementId: "G-3Q3XKX0F1D"
+    };
+    
+    // Initialize Firebase
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const email = document.getElementById("email").value;
+        const pass = document.getElementById("password").value;
+        const alertBox = document.getElementById("alertBox");
+        const btn = document.getElementById("loginBtn");
+
+        alertBox.classList.add("d-none");
+        btn.disabled = true;
+
+        try {
+            // Check password with Firebase
+            const userCredential = await auth.signInWithEmailAndPassword(email, pass);
+            const user = userCredential.user;
+
+            if (user.emailVerified) {
+                // SUCCESS: Email is verified. Log them into Flask.
+                document.getElementById("flaskEmail").value = user.email;
+                document.getElementById("flaskAuthForm").submit();
+            } else {
+                // FAIL: Email not verified
+                alertBox.className = "alert alert-warning";
+                alertBox.innerHTML = "Please verify your email! Check your inbox. <br> <a href='javascript:resend()'>Resend Link</a>";
+                alertBox.classList.remove("d-none");
+                btn.disabled = false;
+                
+                // Helper to resend
+                window.resend = async () => {
+                    await user.sendEmailVerification();
+                    alert("Verification link resent!");
+                }
+            }
+        } catch (error) {
+            alertBox.className = "alert alert-danger";
+            alertBox.innerText = "Login Failed: " + error.message;
+            alertBox.classList.remove("d-none");
+            btn.disabled = false;
+        }
+    });
+</script>
 {% endblock %}
