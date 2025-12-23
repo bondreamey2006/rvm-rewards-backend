@@ -17,15 +17,8 @@
                 </div>
                 <div class="card-body p-4">
                     
-                    {% with messages = get_flashed_messages(with_categories=true) %}
-                      {% if messages %}
-                        {% for category, message in messages %}
-                          <div class="alert alert-{{ category }}">{{ message }}</div>
-                        {% endfor %}
-                      {% endif %}
-                    {% endwith %}
-
-                    <form action="/contact" method="POST">
+                    <form action="https://formspree.io/f/xzdpyaql" method="POST">
+                        
                         <div class="mb-3">
                             <label class="form-label">Your Name</label>
                             <input type="text" name="name" class="form-control" required>
@@ -35,17 +28,23 @@
                             <input type="email" name="email" class="form-control" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Message</label>
-                            <textarea name="message" class="form-control" rows="4" required></textarea>
+                            <label class="form-label">Message / Problem</label>
+                            <textarea name="message" class="form-control" rows="4" placeholder="Describe your issue..." required></textarea>
                         </div>
+                        
+                        <input type="hidden" name="_next" value="https://rvm-rewards-api.onrender.com/contact">
+                        
+                        <input type="text" name="_gotcha" style="display:none">
+
                         <button type="submit" class="btn btn-primary w-100">Send Message</button>
                     </form>
+
                 </div>
             </div>
             
             <div class="text-center mt-4">
-                <p>📧 Email: support@revend.com</p>
-                <p>📍 Location: CS Dept, University Campus</p>
+                <p>📧 Email: bondreamey75@gmail.com</p>
+                <p>📍 Location: VIT Chennai, AB1 Block</p>
             </div>
         </div>
     </div>
