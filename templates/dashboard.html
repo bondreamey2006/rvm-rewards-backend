@@ -1,170 +1,266 @@
 {% extends "base.html" %}
 {% block content %}
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+<style>
+    /* CUSTOM DARK THEME CSS */
+    body {
+        background-color: #121212;
+        color: #e0e0e0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    .navbar {
+        background: rgba(30, 30, 30, 0.95) !important;
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid #333;
+    }
+
+    /* CARD STYLING */
+    .card-dark {
+        background: #1e1e1e;
+        border: 1px solid #333;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        color: #ffffff !important; /* Force White Text */
+    }
+    .card-dark:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,255,127,0.2);
+        border-color: #00ff7f;
+    }
+
+    /* FIX LINKS: No Blue, No Underlines */
+    a.custom-card-link {
+        text-decoration: none !important; 
+        color: inherit !important; 
+        display: block;
+        height: 100%;
+    }
+
+    /* Explicitly force headings white */
+    .card-dark h5, .card-dark h6 {
+        color: #ffffff !important;
+        font-weight: bold;
+    }
+
+    .balance-card {
+        background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+        border: none;
+        position: relative;
+        overflow: hidden;
+    }
+    .balance-card::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+        animation: rotate 20s linear infinite;
+    }
+    @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+    /* DARK TABLE FIXES */
+    .table-dark-custom {
+        background-color: #1e1e1e;
+        color: #ddd;
+    }
+    .table-dark-custom thead {
+        background-color: #000 !important; /* Force Black Header */
+    }
+    .table-dark-custom th { 
+        background-color: #2c2c2c !important; /* Dark Grey Header Cells */
+        color: #ffffff !important;
+        border-bottom: 1px solid #444; 
+    }
+    .table-dark-custom td { 
+        background-color: #1e1e1e !important;
+        border-bottom: 1px solid #333; 
+        color: #ccc;
+    }
+</style>
+
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top">
     <div class="container">
-        <span class="navbar-brand mb-0 h1"><i class="fas fa-recycle"></i> ReVend</span>
+        <a class="navbar-brand fw-bold text-success" href="#"><i class="fas fa-recycle"></i> ReVend <span class="text-white small">Dashboard</span></a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
-                <li class="nav-item"><a class="nav-link" href="/why">Why ReVend</a></li>
-                <li class="nav-item"><a class="nav-link" href="/map">Find Machine</a></li>
-                <li class="nav-item"><a class="nav-link" href="/contact">Contact</a></li>
-                <li class="nav-item"><a class="btn btn-outline-light btn-sm ms-2" href="/logout">Logout</a></li>
+                <li class="nav-item"><a class="nav-link" href="/map"><i class="fas fa-map-marker-alt"></i> Find Machine</a></li>
+                <li class="nav-item"><a class="nav-link" href="/why"><i class="fas fa-leaf"></i> Impact</a></li>
+                <li class="nav-item"><a class="nav-link btn btn-outline-danger btn-sm ms-3 px-4 rounded-pill" href="/logout">Logout</a></li>
             </ul>
         </div>
     </div>
 </nav>
 
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card card-custom bg-gradient-primary text-white mb-4 p-4 text-center">
-                <h3>Current Balance</h3>
-                <h1 class="display-1 fw-bold">{{ points }}</h1>
-                <p class="lead">Green Points</p>
-            </div>
-
-            <div class="row g-3">
-                <div class="col-6">
-                    <div class="card card-custom p-3 text-center h-100">
-                        <i class="fas fa-gift fa-2x text-warning mb-2"></i>
-                        <h5>Redeem</h5>
-                        <p class="small text-muted">Get coupons</p>
-                        <a href="#rewards-section" class="btn btn-outline-primary btn-sm">View Shop</a>
-                    </div>
-                </div>
-                <div class="col-6">
-                    <div class="card card-custom p-3 text-center h-100">
-                        <i class="fas fa-history fa-2x text-info mb-2"></i>
-                        <h5>History</h5>
-                        <p class="small text-muted">Past deposits</p>
-                        <a href="#history-section" class="btn btn-outline-secondary btn-sm">View Log</a>
+<div class="container" style="margin-top: 100px;">
+    
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto">
+            <div class="card card-dark balance-card text-white text-center p-5">
+                <div class="position-relative" style="z-index: 2;">
+                    <h5 class="text-uppercase text-white-50 letter-spacing-2">Total Green Points</h5>
+                    <h1 class="display-1 fw-bold my-3 text-success" style="text-shadow: 0 0 20px rgba(0,255,127,0.5);">{{ points }}</h1>
+                    
+                    <div class="d-inline-block bg-dark px-3 py-1 rounded-pill border border-secondary mt-2">
+                        <small class="text-muted"><i class="fas fa-id-card"></i> ID: <span class="text-white">{{ user_id }}</span></small>
                     </div>
                 </div>
             </div>
-            
-            <div class="alert alert-info mt-4">
-                <strong>User ID:</strong> {{ user_id }} <br>
-                <small>Use this ID or QR code at the ReVend Machine.</small>
+        </div>
+    </div>
+
+    <h5 class="text-white mb-3 ms-2">Quick Actions</h5>
+    <div class="row g-4 mb-5">
+        <div class="col-md-3 col-6">
+            <a href="#rewards-section" class="custom-card-link">
+                <div class="card card-dark p-4 text-center h-100 d-flex flex-column align-items-center justify-content-center">
+                    <div class="bg-success bg-opacity-10 p-3 rounded-circle mb-3">
+                        <i class="fas fa-gift fa-2x text-success"></i>
+                    </div>
+                    <h6>Redeem Rewards</h6>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3 col-6">
+            <a href="/map" class="custom-card-link">
+                <div class="card card-dark p-4 text-center h-100 d-flex flex-column align-items-center justify-content-center">
+                    <div class="bg-primary bg-opacity-10 p-3 rounded-circle mb-3">
+                        <i class="fas fa-map-marked-alt fa-2x text-primary"></i>
+                    </div>
+                    <h6>Find Machine</h6>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3 col-6">
+            <a href="/why" class="custom-card-link">
+                <div class="card card-dark p-4 text-center h-100 d-flex flex-column align-items-center justify-content-center">
+                    <div class="bg-warning bg-opacity-10 p-3 rounded-circle mb-3">
+                        <i class="fas fa-chart-line fa-2x text-warning"></i>
+                    </div>
+                    <h6>View Impact</h6>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3 col-6">
+            <a href="/contact" class="custom-card-link">
+                <div class="card card-dark p-4 text-center h-100 d-flex flex-column align-items-center justify-content-center">
+                    <div class="bg-danger bg-opacity-10 p-3 rounded-circle mb-3">
+                        <i class="fas fa-headset fa-2x text-danger"></i>
+                    </div>
+                    <h6>Support</h6>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <div id="rewards-section" class="mb-5">
+        <h4 class="text-white mb-4 border-start border-4 border-success ps-3">Rewards Store</h4>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card card-dark h-100">
+                    <div class="card-body text-center">
+                        <i class="fab fa-amazon fa-3x text-white mb-3"></i>
+                        <h5 class="card-title mt-2">Amazon Voucher</h5>
+                        <h3 class="text-success fw-bold my-2">500 Pts</h3>
+                        <button class="btn btn-success w-100 mt-3 rounded-pill" onclick="redeemReward('Amazon Voucher', 500)">Claim Now</button>
+                    </div>
+                </div>
             </div>
-
-            <hr class="my-5">
-            
-            <div id="rewards-section">
-                <h3 class="mb-4"><i class="fas fa-store"></i> Rewards Catalog</h3>
-                
-                <div class="row g-3">
-                    <div class="col-6 col-md-4">
-                        <div class="card h-100 shadow-sm">
-                            <div class="bg-light text-center py-4 text-secondary">
-                                <i class="fab fa-amazon fa-3x"></i>
-                            </div>
-                            <div class="card-body">
-                                <h6 class="card-title">Amazon ₹50</h6>
-                                <p class="card-text text-success fw-bold">500 Points</p>
-                                <button class="btn btn-primary btn-sm w-100" onclick="redeemReward('Amazon Voucher', 500)">Claim</button>
-                            </div>
-                        </div>
+            <div class="col-md-4">
+                <div class="card card-dark h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-ticket-alt fa-3x text-danger mb-3"></i>
+                        <h5 class="card-title mt-2">Movie Ticket</h5>
+                        <h3 class="text-success fw-bold my-2">200 Pts</h3>
+                        <button class="btn btn-success w-100 mt-3 rounded-pill" onclick="redeemReward('Movie Ticket', 200)">Claim Now</button>
                     </div>
-
-                    <div class="col-6 col-md-4">
-                        <div class="card h-100 shadow-sm">
-                            <div class="bg-light text-center py-4 text-danger">
-                                <i class="fas fa-ticket-alt fa-3x"></i>
-                            </div>
-                            <div class="card-body">
-                                <h6 class="card-title">Movie Ticket 10% Off</h6>
-                                <p class="card-text text-success fw-bold">200 Points</p>
-                                <button class="btn btn-primary btn-sm w-100" onclick="redeemReward('Movie Ticket', 200)">Claim</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-6 col-md-4">
-                        <div class="card h-100 shadow-sm">
-                            <div class="bg-light text-center py-4 text-warning">
-                                <i class="fas fa-coffee fa-3x"></i>
-                            </div>
-                            <div class="card-body">
-                                <h6 class="card-title">Free Coffee</h6>
-                                <p class="card-text text-success fw-bold">300 Points</p>
-                                <button class="btn btn-primary btn-sm w-100" onclick="redeemReward('Free Coffee', 300)">Claim</button>
-                            </div>
-                        </div>
-                    </div>
-                </div> 
+                </div>
             </div>
+            <div class="col-md-4">
+                <div class="card card-dark h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-coffee fa-3x text-warning mb-3"></i>
+                        <h5 class="card-title mt-2">Free Coffee</h5>
+                        <h3 class="text-success fw-bold my-2">300 Pts</h3>
+                        <button class="btn btn-success w-100 mt-3 rounded-pill" onclick="redeemReward('Free Coffee', 300)">Claim Now</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-            <div id="history-section">
-                <h4 class="mt-5 mb-3"><i class="fas fa-list"></i> Recent Activity</h4>
-                <div class="card card-custom p-3 shadow-sm">
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Activity</th>
-                                    <th>Points</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for t in transactions %}
-                                <tr>
-                                    <td>{{ t.timestamp.strftime('%Y-%m-%d %H:%M') }}</td>
-                                    <td>{{ t.description }}</td>
-                                    <td class="{{ 'text-success' if t.points > 0 else 'text-danger' }} fw-bold">
-                                        {{ '+' if t.points > 0 else '' }}{{ t.points }}
-                                    </td>
-                                </tr>
+    <div class="mb-5">
+        <h4 class="text-white mb-4 border-start border-4 border-primary ps-3">Recent Activity</h4>
+        <div class="card card-dark overflow-hidden">
+            <div class="table-responsive">
+                <table class="table table-dark-custom table-hover mb-0 align-middle">
+                    <thead>
+                        <tr>
+                            <th class="ps-4">Date</th>
+                            <th>Description</th>
+                            <th class="text-end pe-4">Points</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for t in transactions %}
+                        <tr>
+                            <td class="ps-4 text-muted">{{ t.timestamp.strftime('%d %b, %H:%M') }}</td>
+                            <td>
+                                {% if t.type == 'deposit' %}
+                                    <span class="badge bg-success bg-opacity-25 text-success me-2"><i class="fas fa-arrow-down"></i></span>
                                 {% else %}
-                                <tr>
-                                    <td colspan="3" class="text-center text-muted py-3">No recent activity found.</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                                    <span class="badge bg-danger bg-opacity-25 text-danger me-2"><i class="fas fa-arrow-up"></i></span>
+                                {% endif %}
+                                {{ t.description }}
+                            </td>
+                            <td class="text-end pe-4 fw-bold {{ 'text-success' if t.points > 0 else 'text-danger' }}">
+                                {{ '+' if t.points > 0 else '' }}{{ t.points }}
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="3" class="text-center py-5 text-white-50">
+                                <i class="fas fa-box-open fa-2x mb-3 d-block opacity-50"></i>
+                                No activity yet. Visit a machine to start!
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
-            
-            <div class="mb-5"></div> 
+        </div>
+    </div>
+</div>
 
-        </div> </div> </div> <script>
+<script>
 async function redeemReward(rewardName, cost) {
-    if (!confirm(`Are you sure you want to redeem ${rewardName} for ${cost} points?`)) {
-        return;
-    }
+    if (!confirm(`Redeem ${rewardName} for ${cost} points?`)) return;
 
     const userId = "{{ user_id }}"; 
 
     try {
         const response = await fetch('/api/redeem', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                user_id: userId,
-                cost: cost,
-                reward_name: rewardName
-            })
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ user_id: userId, cost: cost, reward_name: rewardName })
         });
-
         const data = await response.json();
 
         if (data.status === 'success') {
-            alert(`Success! You redeemed ${rewardName}. New Balance: ${data.new_balance}`);
+            alert(`🎉 Reward Claimed! New Balance: ${data.new_balance}`);
             location.reload(); 
         } else {
-            alert("Error: " + data.message);
+            alert("❌ Error: " + data.message);
         }
     } catch (error) {
         console.error('Error:', error);
-        alert("Something went wrong!");
+        alert("System Error. Try again.");
     }
 }
 </script>
-
 {% endblock %}
