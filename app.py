@@ -81,9 +81,23 @@ def dashboard():
             
         # Fetch History
         try:
-            history_ref = db.collection('history').where('user_id', '==', user_id).order_by('timestamp', direction=firestore.Query.DESCENDING).limit(10)
+            history_ref = db.collection('history').where('user_id', '==', user_id).order_by('timestamp', direction=firestore.Query.DESCENDING).limit(20)
             for h in history_ref.stream():
                 transactions.append(h.to_dict())
+
+            # --- NEW LOGIC: CALCULATE RUNNING BALANCE ---
+            # We start with the current total points and work backwards through history
+            running_balance = points
+            for t in transactions:
+                # Store the balance *after* this transaction occurred
+                t['balance_after'] = running_balance
+                
+                # Reverse the math to find what the balance was *before* this transaction
+                # If we deposited points (+), the previous balance was lower.
+                # If we redeemed points (-), the previous balance was higher.
+                # Subtracting the points (even if negative) does this perfectly.
+                running_balance = running_balance - t.get('points', 0)
+
         except Exception as e:
             print(f"History Error: {e}")
 
@@ -101,10 +115,7 @@ def machine_map():
 
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
-    if request.method == 'POST':
-        # In a real app, you would send an email here
-        flash("Message sent successfully! We will contact you soon.", "success")
-        return redirect(url_for('contact'))
+    # Only GET is needed now since Formspree handles POST in the HTML form
     return render_template('contact.html')
 
 @app.route('/admin')

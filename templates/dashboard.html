@@ -203,13 +203,13 @@
                         <tr>
                             <th class="ps-4">Date</th>
                             <th>Description</th>
-                            <th class="text-end pe-4">Points</th>
-                        </tr>
+                            <th>Points</th>
+                            <th class="text-end pe-4">Balance</th> </tr>
                     </thead>
                     <tbody>
                         {% for t in transactions %}
                         <tr>
-                            <td class="ps-4 text-muted">{{ t.timestamp.strftime('%d %b, %H:%M') }}</td>
+                            <td class="ps-4 text-white-50">{{ t.timestamp.strftime('%d %b, %H:%M') }}</td>
                             <td>
                                 {% if t.type == 'deposit' %}
                                     <span class="badge bg-success bg-opacity-25 text-success me-2"><i class="fas fa-arrow-down"></i></span>
@@ -218,13 +218,16 @@
                                 {% endif %}
                                 {{ t.description }}
                             </td>
-                            <td class="text-end pe-4 fw-bold {{ 'text-success' if t.points > 0 else 'text-danger' }}">
+                            <td class="fw-bold {{ 'text-success' if t.points > 0 else 'text-danger' }}">
                                 {{ '+' if t.points > 0 else '' }}{{ t.points }}
+                            </td>
+                            <td class="text-end pe-4 text-white">
+                                {{ t.balance_after }}
                             </td>
                         </tr>
                         {% else %}
                         <tr>
-                            <td colspan="3" class="text-center py-5 text-white-50">
+                            <td colspan="4" class="text-center py-5 text-white-50">
                                 <i class="fas fa-box-open fa-2x mb-3 d-block opacity-50"></i>
                                 No activity yet. Visit a machine to start!
                             </td>
