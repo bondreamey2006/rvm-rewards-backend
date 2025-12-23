@@ -40,8 +40,7 @@ def home():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        # The Frontend (HTML) checks the password/verification with Firebase.
-        # If successful, it sends the EMAIL here to create a Flask session.
+        # The Frontend (Google Button) sends the EMAIL here to create a Flask session.
         user_email = request.form.get('email')
         
         if user_email:
@@ -51,10 +50,6 @@ def login():
             flash("Login failed. No email received.", "danger")
             
     return render_template('login.html')
-
-@app.route('/register')
-def register():
-    return render_template('register.html')
 
 @app.route('/logout')
 def logout():
@@ -78,7 +73,7 @@ def dashboard():
         if doc.exists:
             points = doc.to_dict().get('points', 0)
         else:
-            # First time setup: If they just registered, create an empty record
+            # First time setup: If they just logged in with Google for the first time
             user_ref.set({
                 "points": 0,
                 "created_at": datetime.datetime.now()

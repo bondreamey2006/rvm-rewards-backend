@@ -3,34 +3,24 @@
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-5">
-            <div class="card shadow-lg border-0">
-                <div class="card-header bg-success text-white text-center">
-                    <h4>Login</h4>
+            <div class="card shadow-lg border-0 text-center">
+                <div class="card-header bg-white pt-4 border-0">
+                    <h3 class="fw-bold text-dark">Welcome Back</h3>
+                    <p class="text-muted">Login to track your recycling rewards</p>
                 </div>
-                <div class="card-body p-4">
+                <div class="card-body p-5">
+                    
                     <div id="alertBox" class="alert d-none"></div>
 
-                    <form id="loginForm">
-                        <div class="mb-3">
-                            <label class="form-label">Email</label>
-                            <input type="email" id="email" class="form-control" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Password</label>
-                            <input type="password" id="password" class="form-control" required>
-                        </div>
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-success" id="loginBtn">Login</button>
-                        </div>
-                    </form>
-                    
+                    <button id="googleBtn" class="btn btn-light border shadow-sm w-100 py-3 mb-3 d-flex align-items-center justify-content-center gap-3">
+                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="24" height="24" alt="Google">
+                        <span class="fs-5 fw-bold">Sign in with Google</span>
+                    </button>
+
                     <form id="flaskAuthForm" action="/login" method="POST" style="display:none;">
                         <input type="hidden" name="email" id="flaskEmail">
                     </form>
 
-                    <div class="text-center mt-3">
-                        <small>Need an account? <a href="/register">Register here</a></small>
-                    </div>
                 </div>
             </div>
         </div>
@@ -40,7 +30,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 <script>
-    // --- I HAVE FILLED IN YOUR REAL KEYS HERE ---
+    // --- YOUR REAL CONFIG ---
     const firebaseConfig = {
         apiKey: "AIzaSyChYVXkvYgTchL1JK3Z_ESo1ucsbojGOVI",
         authDomain: "rvm-rewards.firebaseapp.com",
@@ -50,48 +40,31 @@
         appId: "1:586613270766:web:241393dd194c33dd02ebff",
         measurementId: "G-3Q3XKX0F1D"
     };
-    
-    // Initialize Firebase
+
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
+    const provider = new firebase.auth.GoogleAuthProvider();
 
-    document.getElementById("loginForm").addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const email = document.getElementById("email").value;
-        const pass = document.getElementById("password").value;
+    document.getElementById("googleBtn").addEventListener("click", async () => {
+        const btn = document.getElementById("googleBtn");
         const alertBox = document.getElementById("alertBox");
-        const btn = document.getElementById("loginBtn");
-
-        alertBox.classList.add("d-none");
-        btn.disabled = true;
 
         try {
-            // Check password with Firebase
-            const userCredential = await auth.signInWithEmailAndPassword(email, pass);
-            const user = userCredential.user;
+            // 1. Open Google Popup
+            const result = await auth.signInWithPopup(provider);
+            const user = result.user;
 
-            if (user.emailVerified) {
-                // SUCCESS: Email is verified. Log them into Flask.
-                document.getElementById("flaskEmail").value = user.email;
-                document.getElementById("flaskAuthForm").submit();
-            } else {
-                // FAIL: Email not verified
-                alertBox.className = "alert alert-warning";
-                alertBox.innerHTML = "Please verify your email! Check your inbox. <br> <a href='javascript:resend()'>Resend Link</a>";
-                alertBox.classList.remove("d-none");
-                btn.disabled = false;
-                
-                // Helper to resend
-                window.resend = async () => {
-                    await user.sendEmailVerification();
-                    alert("Verification link resent!");
-                }
-            }
+            console.log("Logged in as:", user.email);
+
+            // 2. Send Email to Flask Backend
+            document.getElementById("flaskEmail").value = user.email;
+            document.getElementById("flaskAuthForm").submit();
+
         } catch (error) {
+            console.error(error);
             alertBox.className = "alert alert-danger";
             alertBox.innerText = "Login Failed: " + error.message;
             alertBox.classList.remove("d-none");
-            btn.disabled = false;
         }
     });
 </script>
