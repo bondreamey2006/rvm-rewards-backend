@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block content %}
+<nav class="navbar navbar-dark bg-success mb-4">
+    <div class="container">
+        <a href="/dashboard" class="btn btn-outline-light btn-sm"><i class="fas fa-arrow-left"></i> Back</a>
+        <span class="navbar-brand mb-0 h1">Why ReVend?</span>
+        <span></span>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold text-success">Turning Trash into Treasure</h1>
+        <p class="lead text-muted">Join the revolution to clean our planet, one bottle at a time.</p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card h-100 shadow border-0">
+                <div class="card-body text-center">
+                    <i class="fas fa-leaf fa-4x text-success mb-3"></i>
+                    <h4>Save the Environment</h4>
+                    <p>Every plastic bottle takes 450 years to decompose. ReVend ensures 100% of deposited items are recycled responsibly.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 shadow border-0">
+                <div class="card-body text-center">
+                    <i class="fas fa-coins fa-4x text-warning mb-3"></i>
+                    <h4>Earn Rewards</h4>
+                    <p>Why recycle for free? We value your effort. Get points instantly and redeem them for coffee, movies, and shopping vouchers.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 shadow border-0">
+                <div class="card-body text-center">
+                    <i class="fas fa-city fa-4x text-info mb-3"></i>
+                    <h4>Smart Cities</h4>
+                    <p>ReVend uses IoT sensors and Cloud technology to create a cleaner, smarter, and more efficient waste management system.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="alert alert-success mt-5 text-center">
+        <h3>Did you know?</h3>
+        <p>Recycling just one aluminum can saves enough energy to run a TV for 3 hours!</p>
+    </div>
+</div>
+{% endblock %}

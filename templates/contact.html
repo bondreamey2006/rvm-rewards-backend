@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block content %}
+<nav class="navbar navbar-dark bg-primary mb-4">
+    <div class="container">
+        <a href="/dashboard" class="btn btn-outline-light btn-sm"><i class="fas fa-arrow-left"></i> Back</a>
+        <span class="navbar-brand mb-0 h1">Contact Us</span>
+        <span></span>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-white">
+                    <h3 class="text-center my-2">Get in Touch</h3>
+                </div>
+                <div class="card-body p-4">
+                    
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                      {% if messages %}
+                        {% for category, message in messages %}
+                          <div class="alert alert-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                      {% endif %}
+                    {% endwith %}
+
+                    <form action="/contact" method="POST">
+                        <div class="mb-3">
+                            <label class="form-label">Your Name</label>
+                            <input type="text" name="name" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" name="email" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Message</label>
+                            <textarea name="message" class="form-control" rows="4" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Send Message</button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="text-center mt-4">
+                <p>📧 Email: support@revend.com</p>
+                <p>📍 Location: CS Dept, University Campus</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

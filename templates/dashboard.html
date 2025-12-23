@@ -1,9 +1,19 @@
 {% extends "base.html" %}
 {% block content %}
-<nav class="navbar navbar-dark bg-dark mb-4">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
     <div class="container">
         <span class="navbar-brand mb-0 h1"><i class="fas fa-recycle"></i> ReVend</span>
-        <a href="/logout" class="btn btn-outline-light btn-sm">Logout</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="/why">Why ReVend</a></li>
+                <li class="nav-item"><a class="nav-link" href="/map">Find Machine</a></li>
+                <li class="nav-item"><a class="nav-link" href="/contact">Contact</a></li>
+                <li class="nav-item"><a class="btn btn-outline-light btn-sm ms-2" href="/logout">Logout</a></li>
+            </ul>
+        </div>
     </div>
 </nav>
 
@@ -119,7 +129,9 @@
                 </div>
             </div>
             
-            <div class="mb-5"></div> </div> </div> </div> <script>
+            <div class="mb-5"></div> 
+
+        </div> </div> </div> <script>
 async function redeemReward(rewardName, cost) {
     if (!confirm(`Are you sure you want to redeem ${rewardName} for ${cost} points?`)) {
         return;
