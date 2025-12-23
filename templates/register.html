@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+{% block content %}
+<nav class="navbar navbar-dark bg-dark mb-5">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/"><i class="fas fa-recycle"></i> ReVend</a>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow-lg border-0 rounded-3">
+                <div class="card-header bg-dark text-white text-center py-3">
+                    <h4 class="my-1">Create Verified Account</h4>
+                </div>
+                <div class="card-body p-4">
+
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                      {% if messages %}
+                        {% for category, message in messages %}
+                          <div class="alert alert-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                      {% endif %}
+                    {% endwith %}
+
+                    <form method="POST" action="/register" id="regForm">
+                        
+                        <div class="mb-3">
+                            <label class="form-label text-muted">Phone Number (+91...)</label>
+                            <div class="input-group">
+                                <input class="form-control" type="text" id="phoneNumber" name="phone_number" placeholder="+91 9876543210" required />
+                                <button class="btn btn-outline-primary" type="button" id="sendOtpBtn" onclick="onSignInSubmit()">Send OTP</button>
+                            </div>
+                            <div id="recaptcha-container" class="mt-2"></div> </div>
+
+                        <div class="mb-3 d-none" id="otpSection">
+                            <label class="form-label text-muted">Enter OTP</label>
+                            <div class="input-group">
+                                <input class="form-control" type="text" id="otpInput" placeholder="123456" />
+                                <button class="btn btn-success" type="button" onclick="verifyCode()">Verify</button>
+                            </div>
+                            <small class="text-muted">Test Code: 123456 (if set in console)</small>
+                        </div>
+
+                        <div id="secureSection" class="d-none">
+                            <div class="alert alert-success py-2"><i class="fas fa-check-circle"></i> Phone Verified!</div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label text-muted">Set Password</label>
+                                <input class="form-control" type="password" name="password" required />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-muted">Confirm Password</label>
+                                <input class="form-control" type="password" name="confirm_password" required />
+                            </div>
+                            <div class="d-grid">
+                                <button class="btn btn-dark btn-lg" type="submit">Complete Registration</button>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+                <div class="card-footer text-center py-3 bg-light">
+                    <div class="small">Already have an account? <a href="/login" class="fw-bold text-dark">Login here</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+
+<script>
+    // YOUR SPECIFIC CONFIGURATION
+    const firebaseConfig = {
+        apiKey: "AIzaSyChYVXkvYgTchL1JK3Z_ESo1ucsbojGOVI",
+        authDomain: "rvm-rewards.firebaseapp.com",
+        projectId: "rvm-rewards",
+        storageBucket: "rvm-rewards.firebasestorage.app",
+        messagingSenderId: "586613270766",
+        appId: "1:586613270766:web:241393dd194c33dd02ebff",
+        measurementId: "G-3Q3XKX0F1D"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    // Setup Recaptcha (Invisible or Normal)
+    window.onload = function() {
+        window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+            'size': 'normal',
+            'callback': (response) => {
+                // reCAPTCHA solved, allow signInWithPhoneNumber.
+            }
+        });
+    };
+
+    function onSignInSubmit() {
+        const phoneNumber = document.getElementById("phoneNumber").value;
+        const appVerifier = window.recaptchaVerifier;
+
+        if (phoneNumber.length < 10) {
+            alert("Please enter a valid phone number with country code (e.g., +91...)");
+            return;
+        }
+
+        auth.signInWithPhoneNumber(phoneNumber, appVerifier)
+            .then((confirmationResult) => {
+                // SMS sent. Prompt user to type the code.
+                window.confirmationResult = confirmationResult;
+                document.getElementById("otpSection").classList.remove("d-none");
+                document.getElementById("sendOtpBtn").disabled = true;
+                document.getElementById("sendOtpBtn").innerText = "Sent!";
+                alert("OTP Sent! Check your SMS.");
+            }).catch((error) => {
+                console.error("SMS Error:", error);
+                alert("SMS failed! Error: " + error.message);
+                window.recaptchaVerifier.render().then(function(widgetId) {
+                    grecaptcha.reset(widgetId);
+                });
+            });
+    }
+
+    function verifyCode() {
+        const code = document.getElementById("otpInput").value;
+        if(!window.confirmationResult) {
+            alert("Please send OTP first!");
+            return;
+        }
+        window.confirmationResult.confirm(code).then((result) => {
+            // User signed in successfully.
+            const user = result.user;
+            console.log("Verified User:", user);
+            
+            // Show the password section
+            document.getElementById("otpSection").classList.add("d-none");
+            document.getElementById("secureSection").classList.remove("d-none");
+            document.getElementById("phoneNumber").readOnly = true; 
+            
+        }).catch((error) => {
+            alert("Incorrect OTP! Please try again.");
+        });
+    }
+</script>
+{% endblock %}

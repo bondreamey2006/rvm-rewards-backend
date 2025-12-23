@@ -8,9 +8,9 @@
         </button>
         <div class="collapse navbar-collapse" id="publicNav">
             <ul class="navbar-nav ms-auto">
-                <li class="nav-item"><a class="nav-link" href="/why"><i class="fas fa-leaf"></i> Why ReVend?</a></li>
-                <li class="nav-item"><a class="nav-link" href="/map"><i class="fas fa-map-marker-alt"></i> Find Machine</a></li>
-                <li class="nav-item"><a class="nav-link" href="/contact"><i class="fas fa-envelope"></i> Contact</a></li>
+                <li class="nav-item"><a class="nav-link" href="/why">Why ReVend?</a></li>
+                <li class="nav-item"><a class="nav-link" href="/map">Find Machine</a></li>
+                <li class="nav-item"><a class="nav-link" href="/contact">Contact</a></li>
             </ul>
         </div>
     </div>
@@ -18,10 +18,9 @@
 
 <div class="container">
     <div class="row align-items-center justify-content-center">
-        
         <div class="col-md-6 mb-5 d-none d-md-block">
             <h1 class="display-4 fw-bold text-success">Recycle Smart. <br>Earn Instantly.</h1>
-            <p class="lead text-muted mb-4">Join the future of waste management. Deposit your plastic bottles and cans to earn rewards, coupons, and help save the planet.</p>
+            <p class="lead text-muted mb-4">Join the future of waste management. Deposit your plastic bottles and cans to earn rewards.</p>
             <div class="d-flex gap-3">
                 <a href="/why" class="btn btn-outline-success btn-lg">Learn More</a>
                 <a href="/map" class="btn btn-outline-dark btn-lg">Find a Machine</a>
@@ -34,25 +33,34 @@
                     <h4 class="my-1"><i class="fas fa-user-circle"></i> Member Login</h4>
                 </div>
                 <div class="card-body p-4">
+                    
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                      {% if messages %}
+                        {% for category, message in messages %}
+                          <div class="alert alert-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                      {% endif %}
+                    {% endwith %}
+
                     <form method="POST" action="/login">
                         <div class="mb-3">
-                            <label for="inputPhone" class="form-label text-muted">User ID / Phone Number</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-id-card"></i></span>
-                                <input class="form-control form-control-lg" id="inputPhone" type="text" name="phone_number" placeholder="Enter ID (e.g. 8888)" required />
-                            </div>
+                            <label class="form-label text-muted">User ID</label>
+                            <input class="form-control form-control-lg" type="text" name="phone_number" placeholder="e.g. 8888" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-muted">Password</label>
+                            <input class="form-control form-control-lg" type="password" name="password" placeholder="******" required />
                         </div>
                         <div class="d-grid">
-                            <button class="btn btn-success btn-lg" type="submit">Access Dashboard</button>
+                            <button class="btn btn-success btn-lg" type="submit">Login</button>
                         </div>
                     </form>
                 </div>
                 <div class="card-footer text-center py-3 bg-light">
-                    <div class="small text-muted">New user? Just enter a new ID to register instantly!</div>
+                    <div class="small text-muted">New user? <a href="/register" class="fw-bold text-success">Create an Account</a></div>
                 </div>
             </div>
         </div>
-
     </div>
 </div>
 {% endblock %}
