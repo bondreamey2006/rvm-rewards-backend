@@ -1,31 +1,113 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-5">
-            <div class="card shadow-lg border-0 text-center">
-                <div class="card-header bg-white pt-4 border-0">
-                    <h3 class="fw-bold text-dark">Welcome Back</h3>
-                    <p class="text-muted">Login to track your recycling rewards</p>
+
+<div class="bg-dark text-white position-relative overflow-hidden">
+    <div class="container py-5">
+        <div class="row align-items-center py-5">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <h1 class="display-3 fw-bold mb-3">Recycle Smart.<br><span class="text-success">Earn Rewards.</span></h1>
+                <p class="lead mb-4 text-white-50">Join the smart city revolution. Deposit waste in ReVend machines, earn points instantly, and redeem them for real-world rewards.</p>
+                
+                <div class="card bg-white text-dark shadow-lg border-0" style="max-width: 400px;">
+                    <div class="card-body p-4 text-center">
+                        <h5 class="fw-bold mb-3">Get Started Now</h5>
+                        <div id="alertBox" class="alert d-none small"></div>
+                        
+                        <button id="googleBtn" class="btn btn-outline-dark w-100 py-2 d-flex align-items-center justify-content-center gap-2 shadow-sm">
+                            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20" height="20" alt="Google">
+                            <span class="fw-bold">Sign in with Google</span>
+                        </button>
+                        <small class="text-muted d-block mt-2">No password required.</small>
+                    </div>
                 </div>
-                <div class="card-body p-5">
-                    
-                    <div id="alertBox" class="alert d-none"></div>
-
-                    <button id="googleBtn" class="btn btn-light border shadow-sm w-100 py-3 mb-3 d-flex align-items-center justify-content-center gap-3">
-                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="24" height="24" alt="Google">
-                        <span class="fs-5 fw-bold">Sign in with Google</span>
-                    </button>
-
-                    <form id="flaskAuthForm" action="/login" method="POST" style="display:none;">
-                        <input type="hidden" name="email" id="flaskEmail">
-                    </form>
-
-                </div>
+            </div>
+            
+            <div class="col-lg-6 text-center">
+                <i class="fas fa-recycle text-success" style="font-size: 15rem; opacity: 0.8;"></i>
             </div>
         </div>
     </div>
 </div>
+
+<div class="container py-5">
+    <div class="row g-4 text-center">
+        <div class="col-md-4">
+            <div class="p-3">
+                <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                    <i class="fas fa-leaf fa-2x text-success"></i>
+                </div>
+                <h4>Eco-Friendly</h4>
+                <p class="text-muted">Help reduce plastic waste and keep our campus clean using smart IoT technology.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="p-3">
+                <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                    <i class="fas fa-wallet fa-2x text-warning"></i>
+                </div>
+                <h4>Instant Points</h4>
+                <p class="text-muted">No waiting. Points are added to your digital wallet the second you recycle.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="p-3">
+                <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                    <i class="fas fa-map-marked-alt fa-2x text-primary"></i>
+                </div>
+                <h4>Easy to Find</h4>
+                <p class="text-muted">Locate nearest machines using our <a href="/map">Interactive Map</a>.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="bg-light py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">How It Works</h2>
+        </div>
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <ul class="list-group list-group-flush bg-transparent">
+                    <li class="list-group-item bg-transparent border-0 d-flex align-items-center mb-3">
+                        <span class="badge bg-dark rounded-pill me-3" style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">1</span>
+                        <div><strong>Login</strong> with your Google Account.</div>
+                    </li>
+                    <li class="list-group-item bg-transparent border-0 d-flex align-items-center mb-3">
+                        <span class="badge bg-dark rounded-pill me-3" style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">2</span>
+                        <div><strong>Deposit</strong> bottles or cans into the ReVend Machine.</div>
+                    </li>
+                    <li class="list-group-item bg-transparent border-0 d-flex align-items-center mb-3">
+                        <span class="badge bg-dark rounded-pill me-3" style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">3</span>
+                        <div><strong>Scan</strong> your QR code or enter your email.</div>
+                    </li>
+                    <li class="list-group-item bg-transparent border-0 d-flex align-items-center">
+                        <span class="badge bg-success rounded-pill me-3" style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">4</span>
+                        <div><strong>Enjoy</strong> your rewards!</div>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-md-6 text-center">
+                <img src="https://cdn-icons-png.flaticon.com/512/2928/2928889.png" class="img-fluid" style="max-height: 250px;" alt="Recycling Process">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container py-5 text-center">
+    <h3>Ready to make a difference?</h3>
+    <div class="mt-4">
+        <a href="/why" class="btn btn-outline-dark mx-2">Why ReVend?</a>
+        <a href="/contact" class="btn btn-outline-dark mx-2">Contact Us</a>
+    </div>
+    <div class="text-muted mt-5 small">
+        &copy; 2025 ReVend Project. Built for Smart Cities.
+    </div>
+</div>
+
+<form id="flaskAuthForm" action="/login" method="POST" style="display:none;">
+    <input type="hidden" name="email" id="flaskEmail">
+</form>
 
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
@@ -50,13 +132,10 @@
         const alertBox = document.getElementById("alertBox");
 
         try {
-            // 1. Open Google Popup
             const result = await auth.signInWithPopup(provider);
             const user = result.user;
-
-            console.log("Logged in as:", user.email);
-
-            // 2. Send Email to Flask Backend
+            
+            // Success! Send email to backend
             document.getElementById("flaskEmail").value = user.email;
             document.getElementById("flaskAuthForm").submit();
 
@@ -68,4 +147,5 @@
         }
     });
 </script>
+
 {% endblock %}
